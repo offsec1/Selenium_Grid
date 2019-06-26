@@ -1,0 +1,58 @@
+version: '2'
+services:
+  hub:
+    image: selenium/hub:3.14.0-curium
+    container_name: hub
+    ports:
+      - "4444:4444"
+
+  firefox:
+    image: selenium/node-firefox-debug:3.141
+    volumes:
+      - /dev/shm:/dev/shm
+    depends_on:
+      - hub
+    environment:
+      HUB_HOST: hub
+
+  chrome:
+    image: selenium/node-chrome-debug:3.141
+    volumes:
+      - /dev/shm:/dev/shm
+    depends_on:
+      - hub
+    environment:
+      HUB_HOST: hub
+
+  # Using Appium Docker Android
+  real_device:
+    image: appium/appium
+    depends_on:
+      - hub
+    privileged: true
+    network_mode: "service:hub"
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb
+      - ~/.android:/root/.android
+    environment:
+      - CONNECT_TO_GRID=true
+      - SELENIUM_HOST=hub
+      #- BROWSER_NAME=chrome
+
+  appium_android_device:
+    image: budtmo/docker-android-x86-8.1
+    privileged: true
+    depends_on:
+      - hub
+      - real_device
+    ports:
+      - 6080
+    volumes:
+      - ~/tmpVideo:/tmp/video
+    environment:
+      - DEVICE=Samsung Galaxy S6
+      - APPIUM=true
+      - CONNECT_TO_GRID=true
+      - SELENIUM_HOST=hub
+      - MOBILE_WEB_TEST=true
+      - AUTO_RECORD=true

@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+}
+
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+test {
+    maxParallelForks = 3
+    forkEvery = 1
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    testCompile 'org.seleniumhq.selenium:selenium-firefox-driver:3.11.0'
+    testCompile 'org.seleniumhq.selenium:selenium-chrome-driver:2.53.0'
+    testCompile 'org.seleniumhq.selenium:selenium-support:2.53.0'
+}
